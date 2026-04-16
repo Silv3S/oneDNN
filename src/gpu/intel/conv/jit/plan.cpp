@@ -1263,9 +1263,9 @@ dsl::type_t get_accumulation_type(
     if (a.is_int()) return dsl::type_t::s32();
     if (a.is_f64()) return dsl::type_t::f64();
     if (cfg.fma_kind() == fma_kind_t::mad && a.is_f16() && b.is_f16()
-            && !cfg.prb().is_bwd_w) {
-        // FIXME: f16 must use f32 accumulator according to documentation.
-        // Temporarily keeping f16 to avoid regressions.
+            && !cfg.prb().is_bwd_w
+            && utils::one_of(cfg.prb().fpmath_mode, fpmath_mode::f16,
+                    fpmath_mode::any)) {
         return dsl::type_t::f16();
     }
     return dsl::type_t::f32();
